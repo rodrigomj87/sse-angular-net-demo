@@ -36,8 +36,8 @@ Legenda de Status:
 3.4 [x] Componente de listagem de pedidos em tempo real
 3.5 [x] Form para criar novo pedido
 3.6 [x] Indicação visual de conexão (online/offline SSE)
-3.7 [~] Tratamento de reconexão e backoff (implementado backoff básico + jitter)
-3.8 [ ] Pequenos testes unitários (serviço SSE)
+3.7 [x] Tratamento de reconexão e backoff (configurável + watchdog + offline handling)
+3.8 [~] Pequenos testes unitários (serviço SSE) (coberto: backoff, watchdog, maxAttempts)
 
 ## 4. Integração & Execução
 4.1 [ ] Script de execução simultânea (backend + frontend)
