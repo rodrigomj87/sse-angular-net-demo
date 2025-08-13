@@ -1,8 +1,10 @@
 using Serilog;
+using Serilog.Context;
 using SseDemo.Domain.Abstractions;
 using SseDemo.Domain.Entities;
 using SseDemo.OrdersService.Dtos;
 using SseDemo.OrdersService.Sse;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,21 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
+// Correlation / TraceId middleware
+app.Use(async (ctx, next) =>
+{
+    const string TraceHeader = "x-trace-id";
+    if (!ctx.Request.Headers.TryGetValue(TraceHeader, out var traceId) || string.IsNullOrWhiteSpace(traceId))
+    {
+        traceId = Activity.Current?.TraceId.ToString() ?? Guid.NewGuid().ToString("n");
+        ctx.Request.Headers[TraceHeader] = traceId;
+    }
+    ctx.Response.Headers[TraceHeader] = traceId!;
+    using (LogContext.PushProperty("TraceId", traceId!))
+    {
+        await next();
+    }
+});
 app.MapHealthChecks("/health"); // liveness (process up)
 app.MapHealthChecks("/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 {
@@ -75,8 +92,9 @@ app.MapGet("/sse/stream", async (HttpContext ctx, ISseClientRegistry registry) =
 app.MapGet("/sse/clients", (ISseClientRegistry registry) => Results.Ok(registry.GetSnapshot()))
     .WithOpenApi(op => { op.Summary = "Snapshot conexões SSE"; return op; });
 
-orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, IOrderEventPublisher publisher, HttpContext http, CancellationToken ct) =>
+orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, IOrderEventPublisher publisher, HttpContext http, CancellationToken ct, ILoggerFactory loggerFactory) =>
 {
+    var logger = loggerFactory.CreateLogger("Orders.Create");
     // Basic validation (simplified; could use FluentValidation later)
     var errors = new Dictionary<string, string>();
     if (string.IsNullOrWhiteSpace(req.CustomerName)) errors["customerName"] = "Required";
@@ -86,6 +104,7 @@ orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, IOrder
 
     var order = Order.Create(req.CustomerName!.Trim(), req.TotalAmount!.Value);
     await repo.AddAsync(order);
+    logger.LogInformation("Order created {OrderId} code={Code} amount={Amount}", order.Id, order.Code, order.TotalAmount);
     // publish SSE event (fire & forget pattern acceptable here, but await to surface errors early)
     await publisher.OrderCreatedAsync(order, ct);
     var response = OrderResponse.From(order);
@@ -110,35 +129,41 @@ orders.MapGet("/{id:guid}", async (Guid id, IOrderRepository repo) =>
 })
 .WithOpenApi(op => { op.Summary = "Obtém pedido por ID"; return op; });
 
-orders.MapPost("/{id:guid}/pay", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct) =>
+orders.MapPost("/{id:guid}/pay", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct, ILoggerFactory lf) =>
 {
+    var logger = lf.CreateLogger("Orders.Pay");
     var order = await repo.GetAsync(id);
     if (order == null) return Results.NotFound(new ErrorResponse("not_found", "Order not found"));
     var prev = order.Status.ToString();
     if (!order.MarkPaid()) return Results.BadRequest(new ErrorResponse("invalid_state", "Cannot mark as paid from current state"));
     await repo.UpdateAsync(order);
+    logger.LogInformation("Order paid {OrderId} prev={Prev} new={New}", order.Id, prev, order.Status);
     await publisher.OrderStatusChangedAsync(order, prev, ct);
     return Results.Ok(OrderResponse.From(order));
 }).WithOpenApi(op => { op.Summary = "Marca pedido como pago"; return op; });
 
-orders.MapPost("/{id:guid}/fulfill", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct) =>
+orders.MapPost("/{id:guid}/fulfill", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct, ILoggerFactory lf) =>
 {
+    var logger = lf.CreateLogger("Orders.Fulfill");
     var order = await repo.GetAsync(id);
     if (order == null) return Results.NotFound(new ErrorResponse("not_found", "Order not found"));
     var prev = order.Status.ToString();
     if (!order.MarkFulfilled()) return Results.BadRequest(new ErrorResponse("invalid_state", "Cannot fulfill from current state"));
     await repo.UpdateAsync(order);
+    logger.LogInformation("Order fulfilled {OrderId} prev={Prev} new={New}", order.Id, prev, order.Status);
     await publisher.OrderStatusChangedAsync(order, prev, ct);
     return Results.Ok(OrderResponse.From(order));
 }).WithOpenApi(op => { op.Summary = "Marca pedido como finalizado"; return op; });
 
-orders.MapPost("/{id:guid}/cancel", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct) =>
+orders.MapPost("/{id:guid}/cancel", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct, ILoggerFactory lf) =>
 {
+    var logger = lf.CreateLogger("Orders.Cancel");
     var order = await repo.GetAsync(id);
     if (order == null) return Results.NotFound(new ErrorResponse("not_found", "Order not found"));
     var prev = order.Status.ToString();
     if (!order.Cancel()) return Results.BadRequest(new ErrorResponse("invalid_state", "Cannot cancel from current state"));
     await repo.UpdateAsync(order);
+    logger.LogInformation("Order canceled {OrderId} prev={Prev} new={New}", order.Id, prev, order.Status);
     await publisher.OrderStatusChangedAsync(order, prev, ct);
     return Results.Ok(OrderResponse.From(order));
 }).WithOpenApi(op => { op.Summary = "Cancela pedido"; return op; });
