@@ -16,6 +16,7 @@ builder.Host.UseSerilog((ctx, cfg) => cfg
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks().AddCheck<SseDemo.OrdersService.Health.SseRegistryHealthCheck>("sse_registry");
 
 // Repositories
 builder.Services.AddSingleton<SseDemo.Domain.Abstractions.IOrderRepository, SseDemo.OrdersService.Repositories.InMemoryOrderRepository>();
@@ -34,8 +35,21 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
-app.MapHealthChecks("/health");
-app.MapHealthChecks("/ready"); // placeholder readiness
+app.MapHealthChecks("/health"); // liveness (process up)
+app.MapHealthChecks("/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = async (ctx, report) =>
+    {
+        ctx.Response.ContentType = "application/json";
+        var payload = System.Text.Json.JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString().ToLowerInvariant(),
+            checks = report.Entries.Select(e => new { name = e.Key, status = e.Value.Status.ToString().ToLowerInvariant(), data = e.Value.Data })
+        });
+        await ctx.Response.WriteAsync(payload);
+    }
+});
 
 app.MapGet("/ping", () => Results.Ok(new { ok = true, service = "orders", ts = DateTimeOffset.UtcNow }));
 
