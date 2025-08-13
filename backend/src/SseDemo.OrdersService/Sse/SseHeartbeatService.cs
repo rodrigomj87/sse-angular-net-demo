@@ -17,7 +17,7 @@ internal sealed class SseHeartbeatService : BackgroundService
         {
             try
             {
-                await _registry.BroadcastAsync(string.Empty, $":heartbeat {_registry.ActiveCount} connections", ct: stoppingToken);
+                await _registry.BroadcastCommentAsync($"heartbeat {_registry.ActiveCount} connections", stoppingToken);
             }
             catch (Exception ex)
             {

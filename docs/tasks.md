@@ -22,7 +22,7 @@ Legenda de Status:
 2.3 [x] Implementar modelo Order + eventos de domínio
 2.4 [x] Implementar repositório InMemory de Orders
 2.5 [x] Implementar API REST de Orders (CRUD mínimo + criar)
-2.6 [ ] Implementar serviço SSE (endpoint /sse/stream)
+2.6 [~] Implementar serviço SSE (endpoint /sse/stream) (registry, endpoint, publisher, heartbeat OK)
 2.7 [ ] Implementar hub interno de conexão (SseClientRegistry)
 2.8 [ ] Integrar Orders -> publicar evento -> SSE broadcast
 2.9 [ ] Health checks (/health) e /ready

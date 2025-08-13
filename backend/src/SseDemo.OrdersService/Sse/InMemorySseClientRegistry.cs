@@ -55,4 +55,25 @@ internal sealed class InMemorySseClientRegistry : ISseClientRegistry
 
         foreach (var r in toRemove) _clients.TryRemove(r, out _);
     }
+
+    public async Task BroadcastCommentAsync(string comment, CancellationToken ct = default)
+    {
+        if (_clients.IsEmpty) return;
+        var payload = $": {comment}\n\n";
+        var bytes = Encoding.UTF8.GetBytes(payload);
+        var toRemove = new List<Guid>();
+        foreach (var kvp in _clients)
+        {
+            try
+            {
+                await kvp.Value.Body.WriteAsync(bytes, 0, bytes.Length, ct);
+                await kvp.Value.Body.FlushAsync(ct);
+            }
+            catch
+            {
+                toRemove.Add(kvp.Key);
+            }
+        }
+        foreach (var r in toRemove) _clients.TryRemove(r, out _);
+    }
 }
