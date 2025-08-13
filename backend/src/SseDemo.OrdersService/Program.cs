@@ -1,4 +1,7 @@
 using Serilog;
+using SseDemo.Domain.Abstractions;
+using SseDemo.Domain.Entities;
+using SseDemo.OrdersService.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,5 +33,40 @@ app.MapHealthChecks("/health");
 app.MapHealthChecks("/ready"); // placeholder readiness
 
 app.MapGet("/ping", () => Results.Ok(new { ok = true, service = "orders", ts = DateTimeOffset.UtcNow }));
+
+var orders = app.MapGroup("/api/orders").WithTags("Orders");
+
+orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, HttpContext http) =>
+{
+    // Basic validation (simplified; could use FluentValidation later)
+    var errors = new Dictionary<string, string>();
+    if (string.IsNullOrWhiteSpace(req.CustomerName)) errors["customerName"] = "Required";
+    if (req.TotalAmount is null || req.TotalAmount < 0) errors["totalAmount"] = "Must be >= 0";
+    if (errors.Count > 0)
+        return Results.BadRequest(new ErrorResponse("validation_error", "Validation failed", errors));
+
+    var order = Order.Create(req.CustomerName!.Trim(), req.TotalAmount!.Value);
+    await repo.AddAsync(order);
+    var response = OrderResponse.From(order);
+    var location = $"/api/orders/{order.Id}";
+    return Results.Created(location, response);
+})
+.WithOpenApi(op => { op.Summary = "Cria um novo pedido"; return op; });
+
+orders.MapGet("/", async (IOrderRepository repo) =>
+{
+    var list = await repo.ListAsync(0, 200);
+    var items = list.Select(OrderResponse.From).ToArray();
+    return Results.Ok(new ListOrdersResponse { Items = items, Total = items.Length });
+})
+.WithOpenApi(op => { op.Summary = "Lista pedidos"; return op; });
+
+orders.MapGet("/{id:guid}", async (Guid id, IOrderRepository repo) =>
+{
+    var order = await repo.GetAsync(id);
+    if (order == null) return Results.NotFound(new ErrorResponse("not_found", "Order not found"));
+    return Results.Ok(OrderResponse.From(order));
+})
+.WithOpenApi(op => { op.Summary = "Obtém pedido por ID"; return op; });
 
 app.Run();
