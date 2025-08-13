@@ -1,0 +1,66 @@
+using SseDemo.Domain.Abstractions;
+using SseDemo.Domain.Enums;
+using SseDemo.Domain.Events;
+
+namespace SseDemo.Domain.Entities;
+
+public sealed class Order
+{
+    private readonly List<IDomainEvent> _domainEvents = new();
+    public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+
+    public Guid Id { get; }
+    public string Code { get; }
+    public OrderStatus Status { get; private set; }
+    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset UpdatedAt { get; private set; }
+
+    private Order(Guid id, string code, DateTimeOffset createdAt)
+    {
+        Id = id;
+        Code = code;
+        Status = OrderStatus.Created;
+        CreatedAt = createdAt;
+        UpdatedAt = createdAt;
+    }
+
+    public static Order Create(string? prefix = null)
+    {
+        var id = Guid.NewGuid();
+        var code = (prefix ?? "ORD") + "-" + id.ToString()[..8].ToUpperInvariant();
+        var now = DateTimeOffset.UtcNow;
+        var order = new Order(id, code, now);
+        order.AddEvent(new OrderCreatedDomainEvent(order.Id));
+        return order;
+    }
+
+    public bool MarkPaid()
+    {
+        if (Status != OrderStatus.Created) return false;
+        Status = OrderStatus.Paid;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        AddEvent(new OrderPaidDomainEvent(Id));
+        return true;
+    }
+
+    public bool MarkFulfilled()
+    {
+        if (Status != OrderStatus.Paid) return false;
+        Status = OrderStatus.Fulfilled;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        AddEvent(new OrderFulfilledDomainEvent(Id));
+        return true;
+    }
+
+    public bool Cancel()
+    {
+        if (Status is OrderStatus.Fulfilled or OrderStatus.Cancelled) return false;
+        Status = OrderStatus.Cancelled;
+        UpdatedAt = DateTimeOffset.UtcNow;
+        return true;
+    }
+
+    public void ClearDomainEvents() => _domainEvents.Clear();
+
+    private void AddEvent(IDomainEvent evt) => _domainEvents.Add(evt);
+}

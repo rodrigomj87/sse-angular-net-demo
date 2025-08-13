@@ -19,7 +19,7 @@ Legenda de Status:
 ## 2. Setup Backend (.NET)
 2.1 [x] Criar solution e projetos: Core (Domínio), Orders.Service, Events.Service, Gateway (opcional), Shared
 2.2 [x] Adicionar pacotes (Serilog, Swagger, HealthChecks)
-2.3 [ ] Implementar modelo Order + eventos de domínio
+2.3 [x] Implementar modelo Order + eventos de domínio
 2.4 [ ] Implementar repositório InMemory de Orders
 2.5 [ ] Implementar API REST de Orders (CRUD mínimo + criar)
 2.6 [ ] Implementar serviço SSE (endpoint /sse/stream)
@@ -78,4 +78,5 @@ Legenda de Status:
 ---
 
 ## Próxima Task Sugerida
+Seguir para 2.4: Implementar repositório InMemory de Orders
 Seguir para 2.3: Implementar modelo Order + eventos de domínio
