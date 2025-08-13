@@ -2,6 +2,7 @@ using Serilog;
 using SseDemo.Domain.Abstractions;
 using SseDemo.Domain.Entities;
 using SseDemo.OrdersService.Dtos;
+using SseDemo.OrdersService.Sse;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddHealthChecks();
 
 // Repositories
 builder.Services.AddSingleton<SseDemo.Domain.Abstractions.IOrderRepository, SseDemo.OrdersService.Repositories.InMemoryOrderRepository>();
+// SSE registry
+builder.Services.AddSingleton<ISseClientRegistry, InMemorySseClientRegistry>();
 
 var app = builder.Build();
 
@@ -35,6 +38,21 @@ app.MapHealthChecks("/ready"); // placeholder readiness
 app.MapGet("/ping", () => Results.Ok(new { ok = true, service = "orders", ts = DateTimeOffset.UtcNow }));
 
 var orders = app.MapGroup("/api/orders").WithTags("Orders");
+// SSE streaming endpoint
+app.MapGet("/sse/stream", async (HttpContext ctx, ISseClientRegistry registry) =>
+{
+    ctx.Response.Headers.Add("Content-Type", "text/event-stream");
+    ctx.Response.Headers.Add("Cache-Control", "no-cache");
+    ctx.Response.Headers.Add("Connection", "keep-alive");
+    var id = registry.Register(ctx.Response, ctx.RequestAborted);
+    // Initial comment to keep connection open
+    await ctx.Response.WriteAsync(": connected \n\n");
+    await ctx.Response.Body.FlushAsync();
+    // Hold until client disconnect
+    try { await Task.Delay(Timeout.Infinite, ctx.RequestAborted); }
+    catch (TaskCanceledException) { }
+    finally { registry.Remove(id); }
+}).WithOpenApi(op => { op.Summary = "Fluxo SSE de eventos"; return op; });
 
 orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, HttpContext http) =>
 {
