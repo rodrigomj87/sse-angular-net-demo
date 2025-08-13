@@ -1,0 +1,123 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0": {
+      "SseDemo.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/SseDemo.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SseDemo.Domain.dll": {}
+        }
+      },
+      "SseDemo.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/SseDemo.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SseDemo.Shared.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "SseDemo.Domain/1.0.0": {
+      "type": "project",
+      "path": "../SseDemo.Domain/SseDemo.Domain.csproj",
+      "msbuildProject": "../SseDemo.Domain/SseDemo.Domain.csproj"
+    },
+    "SseDemo.Shared/1.0.0": {
+      "type": "project",
+      "path": "../SseDemo.Shared/SseDemo.Shared.csproj",
+      "msbuildProject": "../SseDemo.Shared/SseDemo.Shared.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0": [
+      "SseDemo.Domain >= 1.0.0",
+      "SseDemo.Shared >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\rodri\\.nuget\\packages\\": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "D:\\dev\\sse-angular-net\\backend\\SseDemo.OrdersService\\SseDemo.OrdersService.csproj",
+      "projectName": "SseDemo.OrdersService",
+      "projectPath": "D:\\dev\\sse-angular-net\\backend\\SseDemo.OrdersService\\SseDemo.OrdersService.csproj",
+      "packagesPath": "C:\\Users\\rodri\\.nuget\\packages\\",
+      "outputPath": "D:\\dev\\sse-angular-net\\backend\\SseDemo.OrdersService\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\rodri\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "projectReferences": {
+            "D:\\dev\\sse-angular-net\\backend\\SseDemo.Domain\\SseDemo.Domain.csproj": {
+              "projectPath": "D:\\dev\\sse-angular-net\\backend\\SseDemo.Domain\\SseDemo.Domain.csproj"
+            },
+            "D:\\dev\\sse-angular-net\\backend\\SseDemo.Shared\\SseDemo.Shared.csproj": {
+              "projectPath": "D:\\dev\\sse-angular-net\\backend\\SseDemo.Shared\\SseDemo.Shared.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      }
+    },
+    "frameworks": {
+      "net8.0": {
+        "targetAlias": "net8.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.AspNetCore.App": {
+            "privateAssets": "none"
+          },
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.300/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

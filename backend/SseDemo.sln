@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.Domain", "SseDemo.Domain\SseDemo.Domain.csproj", "{25AD8A94-C0D2-4241-88B4-252FCF6D9CD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.Domain", "src/SseDemo.Domain/SseDemo.Domain.csproj", "{25AD8A94-C0D2-4241-88B4-252FCF6D9CD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.Shared", "SseDemo.Shared\SseDemo.Shared.csproj", "{28DF32A1-150A-4F7D-AAF9-F128BC4960DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.Shared", "src/SseDemo.Shared/SseDemo.Shared.csproj", "{28DF32A1-150A-4F7D-AAF9-F128BC4960DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.OrdersService", "SseDemo.OrdersService\SseDemo.OrdersService.csproj", "{C3F132A5-5661-48A9-89FC-A0D669C97F93}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.OrdersService", "src/SseDemo.OrdersService/SseDemo.OrdersService.csproj", "{C3F132A5-5661-48A9-89FC-A0D669C97F93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.Gateway", "SseDemo.Gateway\SseDemo.Gateway.csproj", "{DA0E26B0-3894-45BF-BF3B-000B767B2A49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SseDemo.Gateway", "src/SseDemo.Gateway/SseDemo.Gateway.csproj", "{DA0E26B0-3894-45BF-BF3B-000B767B2A49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
