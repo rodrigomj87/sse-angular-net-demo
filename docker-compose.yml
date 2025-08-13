@@ -1,0 +1,18 @@
+# Task 4.4 docker-compose
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/orders-web/Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
