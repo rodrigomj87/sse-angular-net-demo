@@ -11,5 +11,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@angular/cli": "^20.1.6"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
 }

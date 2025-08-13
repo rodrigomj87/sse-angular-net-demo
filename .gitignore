@@ -56,3 +56,48 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+ 
+# ================= Angular / Frontend (Task 3.1) =================
+# Node dependencies & caches
+node_modules/
+**/node_modules/
+frontend/node_modules/
+package-lock.json
+frontend/package-lock.json
+pnpm-lock.yaml
+frontend/pnpm-lock.yaml
+yarn.lock
+frontend/yarn.lock
+
+# Angular build outputs
+dist/
+frontend/dist/
+.angular/cache/
+frontend/.angular/cache/
+
+# IDE / tooling (frontend)
+frontend/.vscode/
+.eslintcache
+frontend/.eslintcache
+
+# Coverage & test artifacts (frontend)
+coverage/
+frontend/coverage/
+
+# Env files (if created later for secrets – keep out of VCS)
+frontend/.env*
+.env.local
+frontend/.env.local
+
+# Temporary logs
+frontend/npm-debug.log*
+npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Storybook / misc (future)
+storybook-static/
+frontend/storybook-static/
+
+# VSCode workspace storage inside frontend
+frontend/.history/
