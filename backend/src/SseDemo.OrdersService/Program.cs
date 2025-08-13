@@ -21,6 +21,8 @@ builder.Services.AddHealthChecks();
 builder.Services.AddSingleton<SseDemo.Domain.Abstractions.IOrderRepository, SseDemo.OrdersService.Repositories.InMemoryOrderRepository>();
 // SSE registry
 builder.Services.AddSingleton<ISseClientRegistry, InMemorySseClientRegistry>();
+builder.Services.AddSingleton<IOrderEventPublisher, SseOrderEventPublisher>();
+builder.Services.AddHostedService<SseHeartbeatService>();
 
 var app = builder.Build();
 
@@ -54,7 +56,7 @@ app.MapGet("/sse/stream", async (HttpContext ctx, ISseClientRegistry registry) =
     finally { registry.Remove(id); }
 }).WithOpenApi(op => { op.Summary = "Fluxo SSE de eventos"; return op; });
 
-orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, HttpContext http) =>
+orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, IOrderEventPublisher publisher, HttpContext http, CancellationToken ct) =>
 {
     // Basic validation (simplified; could use FluentValidation later)
     var errors = new Dictionary<string, string>();
@@ -65,6 +67,8 @@ orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, HttpCo
 
     var order = Order.Create(req.CustomerName!.Trim(), req.TotalAmount!.Value);
     await repo.AddAsync(order);
+    // publish SSE event (fire & forget pattern acceptable here, but await to surface errors early)
+    await publisher.OrderCreatedAsync(order, ct);
     var response = OrderResponse.From(order);
     var location = $"/api/orders/{order.Id}";
     return Results.Created(location, response);
