@@ -40,13 +40,13 @@ Legenda de Status:
 3.8 [x] Pequenos testes unitários (serviço SSE) (backoff, listeners, watchdog, offline/online, controls, destroy)
 
 ## 4. Integração & Execução
-4.1 [ ] Script de execução simultânea (backend + frontend)
-4.2 [ ] Dockerfile(s) backend
-4.3 [ ] Dockerfile frontend
-4.4 [ ] docker-compose.yml (rede interna + variáveis)
-4.5 [ ] Ajustar CORS e headers corretos para SSE
-4.6 [ ] Teste de carga leve (k6 ou autocannon) opcional
-4.7 [ ] Guia de troubleshooting
+4.1 [x] Script de execução simultânea (backend + frontend)
+4.2 [x] Dockerfile(s) backend
+4.3 [x] Dockerfile frontend
+4.4 [x] docker-compose.yml (rede interna + variáveis)
+4.5 [x] Ajustar CORS e headers corretos para SSE
+4.6 [x] Teste de carga leve (k6 ou autocannon) opcional
+4.7 [x] Guia de troubleshooting
 
 ## 5. Observabilidade & Robustez
 5.1 [ ] Estrutura de logs (exemplos) na doc
@@ -78,4 +78,4 @@ Legenda de Status:
 ---
 
 ## Próxima Task Sugerida
-Implementar 3.8: testes unitários do serviço SSE e aprimorar lógica de backoff/cancelamento
+Iniciar seção 5: 5.1 (documentar estrutura de logs) e 5.2 (métrica de conexões ativas)
