@@ -30,13 +30,13 @@ Legenda de Status:
 2.11 [x] Documentação Swagger/OpenAPI (trace header filter, exemplos OrderResponse & ErrorResponse, descrição endpoint SSE)
 
 ## 3. Frontend (Angular)
-3.1 [ ] Criar projeto Angular base
-3.2 [ ] Serviço Angular para SSE (EventSource wrapper + reconexão)
-3.3 [ ] Serviço Orders API (HttpClient)
-3.4 [ ] Componente de listagem de pedidos em tempo real
-3.5 [ ] Form para criar novo pedido
-3.6 [ ] Indicação visual de conexão (online/offline SSE)
-3.7 [ ] Tratamento de reconexão e backoff
+3.1 [x] Criar projeto Angular base
+3.2 [x] Serviço Angular para SSE (EventSource wrapper + reconexão)
+3.3 [x] Serviço Orders API (HttpClient)
+3.4 [x] Componente de listagem de pedidos em tempo real
+3.5 [x] Form para criar novo pedido
+3.6 [x] Indicação visual de conexão (online/offline SSE)
+3.7 [~] Tratamento de reconexão e backoff (implementado backoff básico + jitter)
 3.8 [ ] Pequenos testes unitários (serviço SSE)
 
 ## 4. Integração & Execução
@@ -78,4 +78,4 @@ Legenda de Status:
 ---
 
 ## Próxima Task Sugerida
-Iniciar 2.6: Implementar serviço SSE (endpoint /sse/stream)
+Implementar 3.8: testes unitários do serviço SSE e aprimorar lógica de backoff/cancelamento
