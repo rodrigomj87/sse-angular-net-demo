@@ -17,7 +17,7 @@ Legenda de Status:
 1.9 [x] Criar ADRs base (template) (ver `adrs/ADR-TEMPLATE.md`, `adrs/ADR-0001-escolha-sse.md`, `adrs/ADR-0002-arquitetura-inmemory.md`)
 
 ## 2. Setup Backend (.NET)
-2.1 [ ] Criar solution e projetos: Core (Domínio), Orders.Service, Events.Service, Gateway (opcional), Shared
+2.1 [x] Criar solution e projetos: Core (Domínio), Orders.Service, Events.Service, Gateway (opcional), Shared
 2.2 [ ] Adicionar pacotes (Serilog, Swagger, HealthChecks)
 2.3 [ ] Implementar modelo Order + eventos de domínio
 2.4 [ ] Implementar repositório InMemory de Orders
@@ -78,4 +78,4 @@ Legenda de Status:
 ---
 
 ## Próxima Task Sugerida
-Iniciar pela 2.1: Criar solution e projetos.
+Seguir para 2.2: Adicionar pacotes (Serilog, Swagger, HealthChecks)
