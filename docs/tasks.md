@@ -22,7 +22,7 @@ Legenda de Status:
 2.3 [x] Implementar modelo Order + eventos de domínio
 2.4 [x] Implementar repositório InMemory de Orders
 2.5 [x] Implementar API REST de Orders (CRUD mínimo + criar)
-2.6 [~] Implementar serviço SSE (endpoint /sse/stream) (registry, endpoint, publisher, heartbeat OK)
+2.6 [x] Implementar serviço SSE (endpoint /sse/stream) (registry, endpoint, publisher, heartbeat OK)
 2.7 [x] Implementar hub interno de conexão (SseClientRegistry)
 2.8 [x] Integrar Orders -> publicar evento -> SSE broadcast (order-created + status-changed)
 2.9 [x] Health checks (/health) e /ready (custom sse_registry + repository + JSON readiness response)
@@ -55,13 +55,13 @@ Legenda de Status:
 5.4 [x] Evolução para Redis Pub/Sub (design doc)
 
 ## 6. Documentação Complementar
-6.1 [ ] ADR-0001 - Escolha de SSE
-6.2 [ ] ADR-0002 - Arquitetura inicial in-memory
-6.3 [ ] Comparativo SSE x WebSockets x Polling
-6.4 [ ] FAQ
-6.5 [ ] Glossário
-6.6 [ ] README frontend
-6.7 [ ] README backend
+6.1 [x] ADR-0001 - Escolha de SSE (revisada e finalizada)
+6.2 [x] ADR-0002 - Arquitetura inicial in-memory (revisada e finalizada)
+6.3 [x] Comparativo SSE x WebSockets x Polling (ver `concepts/01-sse-vs-websockets-polling.md`)
+6.4 [x] FAQ (ver `faq.md`)
+6.5 [x] Glossário (ver `glossario.md`)
+6.6 [x] README frontend (ver `../frontend/orders-web/README.md`)
+6.7 [x] README backend (ver `../backend/README.md`)
 
 ## 7. Qualidade & Automação
 7.1 [ ] Configurar lint + analyzers .NET
