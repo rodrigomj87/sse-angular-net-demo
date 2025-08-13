@@ -95,4 +95,37 @@ orders.MapGet("/{id:guid}", async (Guid id, IOrderRepository repo) =>
 })
 .WithOpenApi(op => { op.Summary = "Obtém pedido por ID"; return op; });
 
+orders.MapPost("/{id:guid}/pay", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct) =>
+{
+    var order = await repo.GetAsync(id);
+    if (order == null) return Results.NotFound(new ErrorResponse("not_found", "Order not found"));
+    var prev = order.Status.ToString();
+    if (!order.MarkPaid()) return Results.BadRequest(new ErrorResponse("invalid_state", "Cannot mark as paid from current state"));
+    await repo.UpdateAsync(order);
+    await publisher.OrderStatusChangedAsync(order, prev, ct);
+    return Results.Ok(OrderResponse.From(order));
+}).WithOpenApi(op => { op.Summary = "Marca pedido como pago"; return op; });
+
+orders.MapPost("/{id:guid}/fulfill", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct) =>
+{
+    var order = await repo.GetAsync(id);
+    if (order == null) return Results.NotFound(new ErrorResponse("not_found", "Order not found"));
+    var prev = order.Status.ToString();
+    if (!order.MarkFulfilled()) return Results.BadRequest(new ErrorResponse("invalid_state", "Cannot fulfill from current state"));
+    await repo.UpdateAsync(order);
+    await publisher.OrderStatusChangedAsync(order, prev, ct);
+    return Results.Ok(OrderResponse.From(order));
+}).WithOpenApi(op => { op.Summary = "Marca pedido como finalizado"; return op; });
+
+orders.MapPost("/{id:guid}/cancel", async (Guid id, IOrderRepository repo, IOrderEventPublisher publisher, CancellationToken ct) =>
+{
+    var order = await repo.GetAsync(id);
+    if (order == null) return Results.NotFound(new ErrorResponse("not_found", "Order not found"));
+    var prev = order.Status.ToString();
+    if (!order.Cancel()) return Results.BadRequest(new ErrorResponse("invalid_state", "Cannot cancel from current state"));
+    await repo.UpdateAsync(order);
+    await publisher.OrderStatusChangedAsync(order, prev, ct);
+    return Results.Ok(OrderResponse.From(order));
+}).WithOpenApi(op => { op.Summary = "Cancela pedido"; return op; });
+
 app.Run();

@@ -26,4 +26,17 @@ internal sealed class SseOrderEventPublisher : IOrderEventPublisher
         });
         return _registry.BroadcastAsync("order-created", payload, order.Id.ToString(), ct);
     }
+
+    public Task OrderStatusChangedAsync(Order order, string previousStatus, CancellationToken ct = default)
+    {
+        var payload = JsonSerializer.Serialize(new
+        {
+            id = order.Id,
+            code = order.Code,
+            previousStatus = previousStatus.ToLowerInvariant(),
+            newStatus = order.Status.ToString().ToLowerInvariant(),
+            updatedAt = order.UpdatedAt
+        });
+        return _registry.BroadcastAsync("order-status-changed", payload, order.Id.ToString(), ct);
+    }
 }
