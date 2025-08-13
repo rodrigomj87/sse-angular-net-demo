@@ -56,6 +56,10 @@ app.MapGet("/sse/stream", async (HttpContext ctx, ISseClientRegistry registry) =
     finally { registry.Remove(id); }
 }).WithOpenApi(op => { op.Summary = "Fluxo SSE de eventos"; return op; });
 
+// SSE clients snapshot (diagnóstico simples)
+app.MapGet("/sse/clients", (ISseClientRegistry registry) => Results.Ok(registry.GetSnapshot()))
+    .WithOpenApi(op => { op.Summary = "Snapshot conexões SSE"; return op; });
+
 orders.MapPost("/", async (CreateOrderRequest req, IOrderRepository repo, IOrderEventPublisher publisher, HttpContext http, CancellationToken ct) =>
 {
     // Basic validation (simplified; could use FluentValidation later)

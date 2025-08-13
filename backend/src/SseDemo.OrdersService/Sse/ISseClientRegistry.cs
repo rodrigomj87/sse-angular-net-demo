@@ -10,4 +10,5 @@ public interface ISseClientRegistry
     bool Remove(Guid clientId);
     Task BroadcastAsync(string @event, string data, string? id = null, CancellationToken ct = default);
     Task BroadcastCommentAsync(string comment, CancellationToken ct = default);
+    SseClientsSnapshot GetSnapshot();
 }

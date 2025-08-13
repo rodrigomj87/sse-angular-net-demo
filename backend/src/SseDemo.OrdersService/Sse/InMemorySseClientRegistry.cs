@@ -76,4 +76,6 @@ internal sealed class InMemorySseClientRegistry : ISseClientRegistry
         }
         foreach (var r in toRemove) _clients.TryRemove(r, out _);
     }
+
+    public SseClientsSnapshot GetSnapshot() => new(_clients.Count, DateTimeOffset.UtcNow);
 }
