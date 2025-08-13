@@ -20,6 +20,10 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
+
+# Explicit recursive ignore (ensure already-tracked artifacts can be purged then ignored)
+**/bin/
+**/obj/
 [Ll]og/
 [Ll]ogs/
 

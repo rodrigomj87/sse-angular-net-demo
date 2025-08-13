@@ -18,16 +18,16 @@ Legenda de Status:
 
 ## 2. Setup Backend (.NET)
 2.1 [x] Criar solution e projetos: Core (Domínio), Orders.Service, Events.Service, Gateway (opcional), Shared
-2.2 [ ] Adicionar pacotes (Serilog, Swagger, HealthChecks)
-2.3 [ ] Implementar modelo Order + eventos de domínio
-2.4 [ ] Implementar repositório InMemory de Orders
-2.5 [ ] Implementar API REST de Orders (CRUD mínimo + criar)
-2.6 [ ] Implementar serviço SSE (endpoint /sse/stream)
-2.7 [ ] Implementar hub interno de conexão (SseClientRegistry)
-2.8 [ ] Integrar Orders -> publicar evento -> SSE broadcast
-2.9 [ ] Health checks (/health) e /ready
-2.10 [ ] Logging estruturado + correlação (trace-id)
-2.11 [ ] Documentação Swagger/OpenAPI
+2.2 [x] Adicionar pacotes (Serilog, Swagger, HealthChecks)
+2.3 [x] Implementar modelo Order + eventos de domínio
+2.4 [x] Implementar repositório InMemory de Orders
+2.5 [x] Implementar API REST de Orders (CRUD mínimo + criar)
+2.6 [~] Implementar serviço SSE (endpoint /sse/stream) (registry, endpoint, publisher, heartbeat OK)
+2.7 [x] Implementar hub interno de conexão (SseClientRegistry)
+2.8 [x] Integrar Orders -> publicar evento -> SSE broadcast (order-created + status-changed)
+2.9 [x] Health checks (/health) e /ready (custom sse_registry + repository + JSON readiness response)
+2.10 [x] Logging estruturado + correlação (trace-id middleware + enrichment + SSE payload)
+2.11 [x] Documentação Swagger/OpenAPI (trace header filter, exemplos OrderResponse & ErrorResponse, descrição endpoint SSE)
 
 ## 3. Frontend (Angular)
 3.1 [ ] Criar projeto Angular base
@@ -78,4 +78,4 @@ Legenda de Status:
 ---
 
 ## Próxima Task Sugerida
-Seguir para 2.2: Adicionar pacotes (Serilog, Swagger, HealthChecks)
+Iniciar 2.6: Implementar serviço SSE (endpoint /sse/stream)
