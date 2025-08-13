@@ -81,4 +81,30 @@ describe('SseService', () => {
     flushTimers(11);
     expect(Math.max(...attempts)).toBeGreaterThanOrEqual(1);
   });
+
+  it('should stop reconnecting after maxAttempts and set state exhausted', () => {
+    service.configure({ initialDelayMs: 20, jitterMs: 0, maxAttempts: 2 });
+    const states: string[] = [];
+    service.stateChanges$.subscribe(s => states.push(s));
+    const first = MockEventSource.instances[0];
+    // cause two consecutive errors
+    first.onerror && first.onerror();
+    flushTimers(21); // attempt 1 reconnect
+    const second = MockEventSource.instances[1];
+    second.onerror && second.onerror();
+    flushTimers(41); // attempt 2 reconnect would schedule attempt 3 but blocked
+    expect(states).toContain('exhausted');
+  });
+
+  it('should trigger watchdog reconnect after inactivity', () => {
+    service.configure({ inactivityTimeoutMs: 200, initialDelayMs: 30, jitterMs: 0 });
+    service.reconnectNow(); // apply new opts & new connection
+    flushTimers(1); // let open fire
+    const initialInstances = MockEventSource.instances.length;
+    // advance past inactivity threshold to force watchdog close & reconnect scheduling
+    flushTimers(201); // watchdog triggers, schedules reconnect with delay 30ms
+    flushTimers(30); // allow reconnect to fire
+    flushTimers(1); // allow open
+    expect(MockEventSource.instances.length).toBeGreaterThan(initialInstances);
+  });
 });
