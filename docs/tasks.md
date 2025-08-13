@@ -68,7 +68,7 @@ Legenda de Status:
 7.2 [x] Configurar ESLint + Prettier Angular (já presente .eslintrc.cjs + scripts lint/format)
 7.3 [x] GitHub Actions (build + test) opcional (workflow ci.yml)
 7.4 [x] Testes unitários backend (mínimos) (OrderEntityTests)
-7.5 [ ] Testes e2e simples (criar pedido -> receber evento)
+7.5 [x] Testes e2e simples (criar pedido -> receber evento) (SseSseFlowTests)
 
 ## 8. Finalização
 8.1 [ ] Revisão geral de código

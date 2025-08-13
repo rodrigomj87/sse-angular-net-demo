@@ -24,3 +24,8 @@ app.MapAppHealth();
 app.MapControllers();
 
 app.Run();
+
+// Exposed for integration testing (WebApplicationFactory)
+public partial class Program
+{
+}
