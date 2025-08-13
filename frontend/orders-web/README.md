@@ -1,59 +1,53 @@
 # OrdersWeb
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.6.
+Aplicação Angular que consome eventos SSE de pedidos em tempo real e interage com a API de Orders.
 
-## Development server
+## Requisitos
+- Node 20+
+- Angular CLI instalada globalmente (opcional) ou usar via `npx`
 
-To start a local development server, run:
-
+## Desenvolvimento
 ```bash
-ng serve
+npm install
+npm start # ou: ng serve
+```
+Abre http://localhost:4200
+
+## Configuração SSE
+O serviço SSE conecta em `http://localhost:5000/sse/stream`.
+Reconexão com backoff incremental (constantes definidas no serviço). Indicador visual mostra estado (online/offline/reconnecting).
+
+## Criar Pedido
+Formulário envia POST para `/api/orders`. Eventos de criação/status chegam via SSE e atualizam a lista.
+
+## Estrutura Simplificada
+```
+src/app/
+  services/orders-api.service.ts
+  services/sse.service.ts
+  components/orders-list/
+  components/order-form/
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+## Testes
 ```bash
-ng generate component component-name
+npm test
 ```
+Inclui testes do wrapper SSE (reconexão, listeners, lifecycle).
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+## Build Produção
 ```bash
-ng generate --help
+npm run build
 ```
+Gera artefatos em `dist/` consumidos pelo Dockerfile (stage nginx).
 
-## Building
+## Docker
+`docker-compose.yml` na raiz sobe backend + frontend (nginx) simultaneamente.
 
-To build the project run:
+## Próximos Passos
+- Externalizar configurações (URLs) via environment / file.
+- Acrescentar paginação / filtros.
+- Melhorar feedback de erros de rede.
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Referências
+Ver documentação comparativa SSE em `docs/concepts/01-sse-vs-websockets-polling.md`.
