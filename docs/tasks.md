@@ -37,7 +37,7 @@ Legenda de Status:
 3.5 [x] Form para criar novo pedido
 3.6 [x] Indicação visual de conexão (online/offline SSE)
 3.7 [x] Tratamento de reconexão e backoff (configurável + watchdog + offline handling)
-3.8 [~] Pequenos testes unitários (serviço SSE) (coberto: backoff, watchdog, maxAttempts)
+3.8 [x] Pequenos testes unitários (serviço SSE) (backoff, listeners, watchdog, offline/online, controls, destroy)
 
 ## 4. Integração & Execução
 4.1 [ ] Script de execução simultânea (backend + frontend)
