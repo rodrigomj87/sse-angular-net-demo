@@ -26,7 +26,7 @@ Legenda de Status:
 2.7 [x] Implementar hub interno de conexão (SseClientRegistry)
 2.8 [x] Integrar Orders -> publicar evento -> SSE broadcast (order-created + status-changed)
 2.9 [x] Health checks (/health) e /ready (custom sse_registry + repository + JSON readiness response)
-2.10 [~] Logging estruturado + correlação (trace-id middleware + enrichment)
+2.10 [x] Logging estruturado + correlação (trace-id middleware + enrichment + SSE payload)
 2.11 [ ] Documentação Swagger/OpenAPI
 
 ## 3. Frontend (Angular)

@@ -5,6 +5,7 @@ using SseDemo.Domain.Entities;
 using SseDemo.OrdersService.Dtos;
 using SseDemo.OrdersService.Sse;
 using System.Diagnostics;
+using SseDemo.OrdersService.Tracing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,7 @@ builder.Services.AddSingleton<SseDemo.Domain.Abstractions.IOrderRepository, SseD
 builder.Services.AddSingleton<ISseClientRegistry, InMemorySseClientRegistry>();
 builder.Services.AddSingleton<IOrderEventPublisher, SseOrderEventPublisher>();
 builder.Services.AddHostedService<SseHeartbeatService>();
+builder.Services.AddSingleton<ITraceContextAccessor, TraceContextAccessor>();
 
 var app = builder.Build();
 
@@ -48,6 +50,8 @@ app.Use(async (ctx, next) =>
         ctx.Request.Headers[TraceHeader] = traceId;
     }
     ctx.Response.Headers[TraceHeader] = traceId!;
+    var accessor = ctx.RequestServices.GetRequiredService<ITraceContextAccessor>();
+    accessor.TraceId = traceId!;
     using (LogContext.PushProperty("TraceId", traceId!))
     {
         await next();
