@@ -74,6 +74,9 @@ dist/
 frontend/dist/
 .angular/cache/
 frontend/.angular/cache/
+frontend/orders-web/.angular/
+frontend/orders-web/.angular/cache/
+frontend/orders-web/dist/
 
 # IDE / tooling (frontend)
 frontend/.vscode/
@@ -83,6 +86,7 @@ frontend/.eslintcache
 # Coverage & test artifacts (frontend)
 coverage/
 frontend/coverage/
+frontend/orders-web/coverage/
 
 # Env files (if created later for secrets – keep out of VCS)
 frontend/.env*
