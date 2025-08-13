@@ -26,8 +26,8 @@ class MockEventSource {
   close() {}
 }
 
-// @ts-ignore override global
-(global as any).EventSource = MockEventSource as any;
+// Override browser EventSource for tests
+(window as any).EventSource = MockEventSource as any;
 
 function flushTimers(ms: number) {
   // Advance jasmine clock
