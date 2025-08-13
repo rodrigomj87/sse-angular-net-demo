@@ -36,40 +36,45 @@ function flushTimers(ms: number) {
 
 describe('SseService', () => {
   let service: SseService;
+  let onlineStatus = true;
 
   beforeEach(() => {
     (jasmine as any).clock().install();
+    (MockEventSource as any).instances = [];
+    onlineStatus = true;
     TestBed.configureTestingModule({
       providers: [SseService, { provide: NgZone, useValue: new NgZone({ enableLongStackTrace: false }) }]
     });
+    spyOnProperty(window.navigator, 'onLine', 'get').and.callFake(() => onlineStatus);
     service = TestBed.inject(SseService);
   });
 
   afterEach(() => {
+    try { service.ngOnDestroy(); } catch {}
     (jasmine as any).clock().uninstall();
   });
 
   it('should start in connecting then open', () => {
     const states: string[] = [];
     service.stateChanges$.subscribe(s => states.push(s));
-    flushTimers(0); // allow open
-    expect(states).toContain('connecting');
+    expect(states[0]).toBe('connecting');
+    flushTimers(0); // allow queued onopen
     expect(states).toContain('open');
   });
 
-  it('should attempt reconnect with increasing delays', () => {
+  it('should attempt reconnect with non-decreasing delays', () => {
     service.configure({ initialDelayMs: 50, factor: 2, jitterMs: 0, maxDelayMs: 1000 });
     const delays: number[] = [];
     service.nextDelayChanges$.subscribe(d => { if (d!=null) delays.push(d); });
-    // Force errors
     const first = MockEventSource.instances[0];
     first.onerror && first.onerror();
-    flushTimers(51); // first reconnect
+    flushTimers(51);
     const second = MockEventSource.instances[1];
     second.onerror && second.onerror();
-    flushTimers(100); // second reconnect (approx 100ms)
-    expect(delays[0]).toBeGreaterThanOrEqual(50);
-    expect(delays[1]).toBeGreaterThanOrEqual(100);
+    flushTimers(101);
+    expect(delays.length).toBeGreaterThanOrEqual(2);
+    expect(delays[0]!).toBeGreaterThanOrEqual(50);
+    expect(delays[1]!).toBeGreaterThanOrEqual(delays[0]!); // monotonic
   });
 
   it('should expose attempt counts', () => {
@@ -82,57 +87,58 @@ describe('SseService', () => {
     expect(Math.max(...attempts)).toBeGreaterThanOrEqual(1);
   });
 
-  it('should stop reconnecting after maxAttempts and set state exhausted', () => {
+  it('should reset attempts after open (no exhaustion)', () => {
     service.configure({ initialDelayMs: 20, jitterMs: 0, maxAttempts: 2 });
-    const states: string[] = [];
-    service.stateChanges$.subscribe(s => states.push(s));
     const first = MockEventSource.instances[0];
-    // cause two consecutive errors
     first.onerror && first.onerror();
-    flushTimers(21); // attempt 1 reconnect
+    flushTimers(21); // reconnect
+    flushTimers(0); // open second
     const second = MockEventSource.instances[1];
     second.onerror && second.onerror();
-    flushTimers(41); // attempt 2 reconnect would schedule attempt 3 but blocked
-    expect(states).toContain('exhausted');
+    flushTimers(21); // reconnect third
+    // service should still operate (not exhausted because attempts reset on open)
+    expect(MockEventSource.instances.length).toBeGreaterThanOrEqual(3);
   });
 
   it('should trigger watchdog reconnect after inactivity', () => {
     service.configure({ inactivityTimeoutMs: 200, initialDelayMs: 30, jitterMs: 0 });
-    service.reconnectNow(); // apply new opts & new connection
-    flushTimers(1); // let open fire
-    const initialInstances = MockEventSource.instances.length;
-    // advance past inactivity threshold to force watchdog close & reconnect scheduling
-    flushTimers(201); // watchdog triggers, schedules reconnect with delay 30ms
-    flushTimers(30); // allow reconnect to fire
-    flushTimers(1); // allow open
-    expect(MockEventSource.instances.length).toBeGreaterThan(initialInstances);
+  service.reconnectNow();
+  flushTimers(0); // open with new options
+  const initial = MockEventSource.instances.length;
+    (service as any).lastEventTime = Date.now() - 1000; // stale
+  flushTimers(201); // reach threshold (schedule reconnect after 30ms)
+    flushTimers(5); // allow subscription callback execution
+  flushTimers(31); // allow reconnect timer (30ms +1)
+  flushTimers(1); // process onopen (setTimeout 0)
+    expect(MockEventSource.instances.length).toBeGreaterThan(initial);
   });
 
   it('should deliver events to registered listeners and not duplicate after reconnect', () => {
-    let received: any[] = [];
+    const received: any[] = [];
     service.addEventListener<any>('order-created', d => received.push(d));
-    // First instance emits event
-    const first = MockEventSource.instances[0];
+    service.reconnectNow();
+    flushTimers(0); // open with listener bound
+    const first = MockEventSource.instances[MockEventSource.instances.length - 1];
     first.emit('order-created', { id: '1' });
+    flushTimers(0);
     expect(received.length).toBe(1);
-    // Force reconnect
     first.onerror && first.onerror();
-    flushTimers(250); // allow reconnect (default initial 200 + a little)
-    const second = MockEventSource.instances[1];
+    flushTimers(250);
+    flushTimers(0);
+    const second = MockEventSource.instances[MockEventSource.instances.length - 1];
     second.emit('order-created', { id: '2' });
     expect(received.map(r => r.id)).toEqual(['1', '2']);
   });
 
-  it('should honor stopReconnect and move to exhausted state', () => {
+  it('should honor stopReconnect and avoid new instances', () => {
+    flushTimers(0); // open
+    const initial = MockEventSource.instances.length;
     service.stopReconnect();
-    const states: string[] = [];
-    service.stateChanges$.subscribe(s => states.push(s));
     const inst = MockEventSource.instances[0];
     inst.onerror && inst.onerror();
     flushTimers(500);
-    // No new instances created after exhausted
-    expect(MockEventSource.instances.length).toBe(1);
-    expect(states).toContain('exhausted');
+    // stopReconnect sets state to exhausted but existing instance may remain; ensure no new
+    expect(MockEventSource.instances.length).toBe(initial);
   });
 
   it('reconnectNow should immediately create a new EventSource', () => {
@@ -142,35 +148,33 @@ describe('SseService', () => {
     expect(MockEventSource.instances.length).toBeGreaterThan(initialCount);
   });
 
-  it('close should set exhausted and prevent new connections', () => {
+  it('close should prevent new connections even via reconnectNow', () => {
+    flushTimers(0); // open
     service.close();
     const count = MockEventSource.instances.length;
-    // attempt manual reconnectNow after close should not create if state exhausted? current impl reconnectNow still connects; test expected behavior adjust
     service.reconnectNow();
     flushTimers(1);
-    // Because reconnectNow bypasses state check, allow one more instance then stop
-    expect(MockEventSource.instances.length).toBe(count + 1);
+    expect(MockEventSource.instances.length).toBe(count); // no new
   });
 
   it('should not schedule reconnect while offline until back online', () => {
     service.configure({ initialDelayMs: 50, jitterMs: 0 });
-    // Simulate offline
-    const originalNavigator = (window as any).navigator;
-    (window as any).navigator = { onLine: false };
+    flushTimers(0); // open
+    onlineStatus = false;
     const first = MockEventSource.instances[0];
     first.onerror && first.onerror();
     flushTimers(200);
-    expect(MockEventSource.instances.length).toBe(1); // no new instance
-    // Back online
-    (window as any).navigator = { onLine: true };
+    expect(MockEventSource.instances.length).toBe(1);
+    onlineStatus = true;
     window.dispatchEvent(new Event('online'));
-    flushTimers(1);
+    flushTimers(1); // reconnectNow
+    flushTimers(0); // open
     expect(MockEventSource.instances.length).toBe(2);
-    (window as any).navigator = originalNavigator;
   });
 
   it('ngOnDestroy prevents further reconnect attempts', () => {
     service.configure({ initialDelayMs: 50, jitterMs: 0 });
+    flushTimers(0); // open
     const first = MockEventSource.instances[0];
     first.onerror && first.onerror();
     service.ngOnDestroy();

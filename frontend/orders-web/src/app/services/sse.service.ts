@@ -83,6 +83,7 @@ export class SseService {
 
       this.source.onerror = () => {
         this.zone.run(() => {
+          if (this.connectionState$.value === 'exhausted') return;
           if (navigator.onLine === false) {
             this.connectionState$.next('closed');
             // wait for online event to reconnect
@@ -108,6 +109,7 @@ export class SseService {
   }
 
   private scheduleReconnect() {
+    if (this.connectionState$.value === 'exhausted') return;
     if (this.source) {
       this.source.close();
       this.source = undefined;
