@@ -15,8 +15,9 @@ builder.Host.UseSerilog((ctx, cfg) => cfg
 // Services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHealthChecks();
-builder.Services.AddHealthChecks().AddCheck<SseDemo.OrdersService.Health.SseRegistryHealthCheck>("sse_registry");
+builder.Services.AddHealthChecks()
+    .AddCheck<SseDemo.OrdersService.Health.SseRegistryHealthCheck>("sse_registry")
+    .AddCheck<SseDemo.OrdersService.Health.OrderRepositoryHealthCheck>("orders_repository");
 
 // Repositories
 builder.Services.AddSingleton<SseDemo.Domain.Abstractions.IOrderRepository, SseDemo.OrdersService.Repositories.InMemoryOrderRepository>();

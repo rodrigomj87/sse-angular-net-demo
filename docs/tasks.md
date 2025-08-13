@@ -25,7 +25,7 @@ Legenda de Status:
 2.6 [~] Implementar serviço SSE (endpoint /sse/stream) (registry, endpoint, publisher, heartbeat OK)
 2.7 [x] Implementar hub interno de conexão (SseClientRegistry)
 2.8 [x] Integrar Orders -> publicar evento -> SSE broadcast (order-created + status-changed)
-2.9 [~] Health checks (/health) e /ready (custom sse_registry + JSON readiness response)
+2.9 [x] Health checks (/health) e /ready (custom sse_registry + repository + JSON readiness response)
 2.10 [ ] Logging estruturado + correlação (trace-id)
 2.11 [ ] Documentação Swagger/OpenAPI
 
