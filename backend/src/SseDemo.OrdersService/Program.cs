@@ -90,9 +90,9 @@ var orders = app.MapGroup("/api/orders").WithTags("Orders");
 // SSE streaming endpoint
 app.MapGet("/sse/stream", async (HttpContext ctx, ISseClientRegistry registry) =>
 {
-    ctx.Response.Headers.Add("Content-Type", "text/event-stream");
-    ctx.Response.Headers.Add("Cache-Control", "no-cache");
-    ctx.Response.Headers.Add("Connection", "keep-alive");
+    ctx.Response.Headers["Content-Type"] = "text/event-stream";
+    ctx.Response.Headers["Cache-Control"] = "no-cache";
+    ctx.Response.Headers["Connection"] = "keep-alive";
     var id = registry.Register(ctx.Response, ctx.RequestAborted);
     // Initial comment to keep connection open
     await ctx.Response.WriteAsync(": connected \n\n");

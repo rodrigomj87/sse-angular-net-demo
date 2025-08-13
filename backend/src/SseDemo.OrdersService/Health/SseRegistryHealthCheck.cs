@@ -10,7 +10,7 @@ public sealed class SseRegistryHealthCheck : IHealthCheck
 
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        var data = new Dictionary<string, object?>
+        IReadOnlyDictionary<string, object> data = new Dictionary<string, object>
         {
             ["activeClients"] = _registry.ActiveCount
         };

@@ -13,7 +13,7 @@ public sealed class OrderRepositoryHealthCheck : IHealthCheck
         try
         {
             var list = await _repo.ListAsync(0, 1, cancellationToken);
-            var data = new Dictionary<string, object?>
+            IReadOnlyDictionary<string, object> data = new Dictionary<string, object>
             {
                 ["sampleCount"] = list.Count
             };
