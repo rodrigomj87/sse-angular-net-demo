@@ -17,7 +17,18 @@ builder.Host.UseSerilog((ctx, cfg) => cfg
 
 // Services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o =>
+{
+    o.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Orders Service API",
+        Version = "v1",
+        Description = "API de pedidos com SSE broadcast de eventos (order-created, order-status-changed)"
+    });
+    o.OperationFilter<SseDemo.OrdersService.OpenApi.TraceIdHeaderOperationFilter>();
+    o.SchemaFilter<SseDemo.OrdersService.OpenApi.OrderResponseExample>();
+    o.SchemaFilter<SseDemo.OrdersService.OpenApi.ErrorResponseExample>();
+});
 builder.Services.AddHealthChecks()
     .AddCheck<SseDemo.OrdersService.Health.SseRegistryHealthCheck>("sse_registry")
     .AddCheck<SseDemo.OrdersService.Health.OrderRepositoryHealthCheck>("orders_repository");

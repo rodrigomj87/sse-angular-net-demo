@@ -27,7 +27,7 @@ Legenda de Status:
 2.8 [x] Integrar Orders -> publicar evento -> SSE broadcast (order-created + status-changed)
 2.9 [x] Health checks (/health) e /ready (custom sse_registry + repository + JSON readiness response)
 2.10 [x] Logging estruturado + correlação (trace-id middleware + enrichment + SSE payload)
-2.11 [ ] Documentação Swagger/OpenAPI
+2.11 [x] Documentação Swagger/OpenAPI (trace header filter, exemplos OrderResponse & ErrorResponse, descrição endpoint SSE)
 
 ## 3. Frontend (Angular)
 3.1 [ ] Criar projeto Angular base
