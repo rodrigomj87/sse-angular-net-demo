@@ -64,11 +64,11 @@ Legenda de Status:
 6.7 [x] README backend (ver `../backend/README.md`)
 
 ## 7. Qualidade & Automação
-7.1 [ ] Configurar lint + analyzers .NET
-7.2 [ ] Configurar ESLint + Prettier Angular
-7.3 [ ] GitHub Actions (build + test) opcional
-7.4 [ ] Testes unitários backend (mínimos)
-7.5 [ ] Testes e2e simples (criar pedido -> receber evento)
+7.1 [x] Configurar lint + analyzers .NET (Directory.Build.props + analyzers)
+7.2 [x] Configurar ESLint + Prettier Angular (já presente .eslintrc.cjs + scripts lint/format)
+7.3 [x] GitHub Actions (build + test) opcional (workflow ci.yml)
+7.4 [x] Testes unitários backend (mínimos) (OrderEntityTests)
+7.5 [x] Testes e2e simples (criar pedido -> receber evento) (SseSseFlowTests)
 
 ## 8. Finalização
 8.1 [ ] Revisão geral de código
