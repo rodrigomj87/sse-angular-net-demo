@@ -50,7 +50,7 @@ Legenda de Status:
 
 ## 5. Observabilidade & Robustez
 5.1 [x] Estrutura de logs (exemplos) na doc
-5.2 [ ] Métrica simples (contador de conexões ativas)
+5.2 [x] Métrica simples (contador de conexões ativas)
 5.3 [ ] Estratégia de escalabilidade horizontal (documentação)
 5.4 [ ] Evolução para Redis Pub/Sub (design doc)
 
@@ -78,4 +78,4 @@ Legenda de Status:
 ---
 
 ## Próxima Task Sugerida
-Implementar 5.2: métrica simples (contador de conexões ativas)
+Documentar 5.3: estratégia de escalabilidade horizontal
