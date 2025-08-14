@@ -11,6 +11,6 @@ FROM nginx:1.27-alpine AS final
 COPY --from=build /app/dist/orders-web/browser /usr/share/nginx/html
 # Basic Nginx config enabling gzip and increasing proxy buffers for SSE if later proxied
 RUN sed -i 's/try_files \$uri \$uri\/ =404;/try_files \$uri \$uri\/ \/index.html;/' /etc/nginx/conf.d/default.conf \
-    && echo '\nadd_header Cache-Control "no-cache";' >> /etc/nginx/conf.d/default.conf
+    && printf '\nadd_header Cache-Control "no-cache";\n' >> /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
