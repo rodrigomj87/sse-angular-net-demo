@@ -4,7 +4,7 @@
  */
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CreateOrderDto, Order } from '../models/order.model';
 
@@ -14,7 +14,11 @@ export class OrdersApiService {
   private readonly base = `${environment.apiBaseUrl}/orders`;
 
   list(): Observable<Order[]> {
-    return this.http.get<Order[]>(this.base);
+    return this.http
+      .get<{ items: Order[]; total: number }>(this.base)
+      .pipe(
+        map((r: { items: Order[]; total: number }) => r.items ?? []),
+      );
   }
 
   create(dto: CreateOrderDto): Observable<Order> {

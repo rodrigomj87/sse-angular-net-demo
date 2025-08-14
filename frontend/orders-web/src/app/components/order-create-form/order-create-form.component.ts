@@ -14,7 +14,8 @@ import { OrdersStore } from '../../state/orders.store';
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   template: `
     <form [formGroup]="form" (ngSubmit)="submit()" class="order-form">
-      <input formControlName="description" placeholder="Description" />
+      <input formControlName="customerName" placeholder="Customer name" />
+      <input formControlName="totalAmount" placeholder="Total amount" type="number" step="0.01" />
       <button type="submit" [disabled]="form.invalid || submitting()">Create</button>
     </form>
   `,
@@ -30,13 +31,18 @@ export class OrderCreateFormComponent {
   submitting = signal(false);
 
   form = this.fb.group({
-    description: ['', [Validators.required, Validators.minLength(3)]]
+    customerName: ['', [Validators.required, Validators.minLength(2)]],
+    totalAmount: [0, [Validators.required, Validators.min(0)]]
   });
 
   submit() {
     if (this.form.invalid) return;
     this.submitting.set(true);
-    this.api.create({ description: this.form.value.description! }).subscribe({
+    const dto = {
+      customerName: this.form.value.customerName!,
+      totalAmount: Number(this.form.value.totalAmount!)
+    };
+    this.api.create(dto).subscribe({
       next: () => {
         this.form.reset();
         this.submitting.set(false);

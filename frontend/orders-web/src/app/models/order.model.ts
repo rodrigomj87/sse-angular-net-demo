@@ -2,17 +2,20 @@
  * @file: order.model.ts
  * @responsibility: Order domain interfaces/types for frontend use
  */
-export type OrderStatus = 'Created' | 'Processing' | 'Completed' | 'Cancelled';
+export type OrderStatus = 'CREATED' | 'PAID' | 'FULFILLED' | 'CANCELLED';
 
 export interface Order {
   id: string;
-  description: string;
+  customerName: string;
+  totalAmount: number;
   status: OrderStatus;
-  createdAt: string; // ISO string
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateOrderDto {
-  description: string;
+  customerName: string;
+  totalAmount: number;
 }
 
 export interface SseEvent<T = unknown> {

@@ -6,7 +6,7 @@ import { OrdersListComponent } from './components/orders-list/orders-list.compon
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConnectionStatusComponent, OrderCreateFormComponent, OrdersListComponent],
+  imports: [RouterOutlet, ConnectionStatusComponent, OrderCreateFormComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -56,6 +56,18 @@ export class SseService {
 
   addEventListener<T>(event: string, cb: (payload: T) => void) {
     this.listeners.push({ event, cb });
+    // If EventSource already established, attach immediately (constructor connect only binds existing listeners at that moment)
+    if (this.source) {
+      this.source.addEventListener(event, (e: MessageEvent) => {
+        try {
+          const parsed: SseEvent = { event, data: JSON.parse(e.data) };
+          this.lastEventTime = Date.now();
+          this.zone.run(() => cb(parsed.data as T));
+        } catch {
+          /* swallow */
+        }
+      });
+    }
   }
 
   configure(options: SseBackoffOptions) {

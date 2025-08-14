@@ -3,24 +3,25 @@
  * @responsibility: Render list of orders with real-time updates
  */
 import { Component, inject } from '@angular/core';
-import { AsyncPipe, DatePipe, NgFor, NgIf } from '@angular/common';
+import { AsyncPipe, DatePipe, DecimalPipe, NgFor, NgIf } from '@angular/common';
 import { OrdersStore } from '../../state/orders.store';
 
 @Component({
   selector: 'app-orders-list',
   standalone: true,
-  imports: [NgFor, NgIf, AsyncPipe, DatePipe],
+  imports: [NgFor, NgIf, AsyncPipe, DatePipe, DecimalPipe],
   template: `
     <div *ngIf="orders$ | async as orders; else loading">
       <div *ngIf="orders.length; else empty">
         <table class="orders">
           <thead>
-            <tr><th>ID</th><th>Description</th><th>Status</th><th>Created</th></tr>
+            <tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Created</th></tr>
           </thead>
             <tbody>
               <tr *ngFor="let o of orders">
                 <td>{{ o.id }}</td>
-                <td>{{ o.description }}</td>
+                <td>{{ o.customerName }}</td>
+                <td>{{ o.totalAmount | number:'1.2-2' }}</td>
                 <td>{{ o.status }}</td>
                 <td>{{ o.createdAt | date:'short' }}</td>
               </tr>
