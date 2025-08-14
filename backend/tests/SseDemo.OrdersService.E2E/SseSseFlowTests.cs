@@ -1,29 +1,29 @@
+// Copyright (c) SseDemo. All rights reserved.
+namespace SseDemo.OrdersService.E2E;
+
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.IO;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-
-namespace SseDemo.OrdersService.E2E;
 
 /// <summary>
 /// End-to-end test validating creating an order results in SSE event.
 /// </summary>
-// Style rules relaxed via .editorconfig to focus on behavior validation.
 public class SseSseFlowTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly WebApplicationFactory<Program> factory;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SseSseFlowTests"/> class with a test web host.
     /// </summary>
+    /// <param name="factory">Host factory.</param>
     public SseSseFlowTests(WebApplicationFactory<Program> factory)
     {
-        _factory = factory.WithWebHostBuilder(_ => { });
+        this.factory = factory.WithWebHostBuilder(_ => { });
     }
 
     /// <summary>
@@ -32,10 +32,10 @@ public class SseSseFlowTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact(Timeout = 15000)]
     public async Task CreateOrder_ShouldEmitOrderCreatedEvent()
     {
-        using var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        using var client = this.factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false,
-            HandleCookies = false
+            HandleCookies = false,
         });
 
         using var sseRequest = new HttpRequestMessage(HttpMethod.Get, "/sse/stream");
@@ -54,7 +54,11 @@ public class SseSseFlowTests : IClassFixture<WebApplicationFactory<Program>>
                 if (string.IsNullOrEmpty(line))
                 {
                     var evt = buffer.ToString();
-                    if (evt.Contains("event:order-created")) return evt;
+                    if (evt.Contains("event:order-created"))
+                    {
+                        return evt;
+                    }
+
                     buffer.Clear();
                 }
                 else
@@ -62,6 +66,7 @@ public class SseSseFlowTests : IClassFixture<WebApplicationFactory<Program>>
                     buffer.AppendLine(line);
                 }
             }
+
             return string.Empty;
         });
 
