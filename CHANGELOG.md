@@ -27,14 +27,18 @@ O formato segue (inspirado em) Keep a Changelog e versionamento semântico.
 - Modelos frontend: remoção de `description`; inclusão de `customerName`, `totalAmount`, `updatedAt` e status em UPPERCASE.
 - Serviço de API para consumir resposta paginada `{ items, total }` (ajuste de casing).
 - `OrdersStore` refatorado para normalização de payload SSE flat.
+- Removido pacote StyleCop.Analyzers temporariamente; categorias StyleCop e Documentation desativadas em `.editorconfig` para focar funcionalidade. (anotação histórica já aplicada antes)
+- Ajustado `SseDemo.OrdersService.csproj` com `PreserveCompilationContext` e `AspNetCoreHostingModel=InProcess` para compatibilidade com testes E2E. (mantido no histórico consolidado)
 
 ### Fixed
 - Eventos SSE não atualizavam status após mudança: corrigido mapeamento (`id` vs `orderId`, `newStatus` lower → upper).
 - Lista duplicada de orders (duplicidade removida movendo `<app-orders-list>` para rota via `router-outlet`).
 - Falha ao registrar listeners após conexão SSE inicial (agora listeners tardios são anexados imediatamente).
+- Erro no teste E2E SSE (falha `testhost.deps.json`) resolvido ao usar `Program` correto do OrdersService em `WebApplicationFactory` (consolidado).
 
 ### Removed
 - Uso antigo de `description` em modelos, componentes e chamadas HTTP.
+- Arquivo duplicado `Class1.cs` em `SseDemo.Shared` (já removido previamente, consolidado aqui).
 
 ### Notes
 - Próximos passos sugeridos: paginação real, replay de eventos, persistência (ex: Postgres/Redis), métricas Prometheus, autenticação.
