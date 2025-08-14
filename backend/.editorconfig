@@ -1,6 +1,10 @@
+root = true
+
 # Backend code style overrides
 
 [*.cs]
+dotnet_analyzer_diagnostic.category-StyleCop.severity = none
+dotnet_analyzer_diagnostic.category-Documentation.severity = none
 dotnet_diagnostic.SA1633.severity = none
 dotnet_diagnostic.SA1200.severity = none
 dotnet_diagnostic.SA1309.severity = none

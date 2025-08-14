@@ -1,7 +1,9 @@
+// Copyright (c) SseDemo. All rights reserved.
+#pragma warning disable SA1633, SA0001
+namespace SseDemo.OrdersService.Tests;
+
 using SseDemo.Domain.Entities;
 using Xunit;
-
-namespace SseDemo.OrdersService.Tests;
 
 /// <summary>
 /// Tests for <see cref="Order"/> entity state transitions.

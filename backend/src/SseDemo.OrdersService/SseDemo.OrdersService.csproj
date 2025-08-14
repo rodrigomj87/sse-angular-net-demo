@@ -16,6 +16,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <AssemblyName>SseDemo.OrdersService</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SseDemo.OrdersService.Tests" />
+    <InternalsVisibleTo Include="SseDemo.OrdersService.E2E" />
+  </ItemGroup>
 
 </Project>

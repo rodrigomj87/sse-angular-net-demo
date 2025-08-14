@@ -1,3 +1,5 @@
+// Copyright (c) SseDemo. All rights reserved.
+
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);

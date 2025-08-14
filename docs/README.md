@@ -35,8 +35,43 @@ Construir um exemplo funcional simples, porém realista, demonstrando comunicaç
 - Documentar cada decisão arquitetural
 - Mostrar diferenças SSE x WebSockets x Polling
 
-## Próximos Passos
-Ver arquivo `tasks.md` para detalhamento das tarefas.
+## Estado Atual (v0.1.0 draft)
+Versão inicial funcional pronta para tag `v0.1.0`:
+* SSE funcionando (broadcast de criação e mudança de status de pedidos)
+* Testes unitários e E2E mínimos verdes
+* Observabilidade básica (logs estruturados, health, métricas simples)
+* Documentação de conceitos e ADRs
+
+## Como Executar
+Backend + Frontend juntos:
+```
+./run-dev.ps1
+```
+Ou manual:
+```
+dotnet run --project backend/src/SseDemo.OrdersService
+cd frontend/orders-web
+npm install (primeira vez)
+npm start
+```
+Acesse Swagger em `http://localhost:5000/swagger` e SSE no frontend em `http://localhost:4200` (quando implementado o componente de listagem).
+
+## Testes
+Executar todos os testes .NET:
+```
+dotnet test backend/SseDemo.sln
+```
+Teste E2E específico:
+```
+dotnet test backend/SseDemo.sln --filter FullyQualifiedName~SseSseFlowTests
+```
+
+## Próximas Evoluções
+* Persistência real / Banco
+* Redis Pub/Sub para escalabilidade horizontal
+* Replay via Last-Event-ID
+* Autenticação / autorização
+* Métricas Prometheus detalhadas
 
 ---
 
