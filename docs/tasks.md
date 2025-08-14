@@ -17,58 +17,58 @@ Legenda de Status:
 1.9 [x] Criar ADRs base (template) (ver `adrs/ADR-TEMPLATE.md`, `adrs/ADR-0001-escolha-sse.md`, `adrs/ADR-0002-arquitetura-inmemory.md`)
 
 ## 2. Setup Backend (.NET)
-2.1 [ ] Criar solution e projetos: Core (Domínio), Orders.Service, Events.Service, Gateway (opcional), Shared
-2.2 [ ] Adicionar pacotes (Serilog, Swagger, HealthChecks)
-2.3 [ ] Implementar modelo Order + eventos de domínio
-2.4 [ ] Implementar repositório InMemory de Orders
-2.5 [ ] Implementar API REST de Orders (CRUD mínimo + criar)
-2.6 [ ] Implementar serviço SSE (endpoint /sse/stream)
-2.7 [ ] Implementar hub interno de conexão (SseClientRegistry)
-2.8 [ ] Integrar Orders -> publicar evento -> SSE broadcast
-2.9 [ ] Health checks (/health) e /ready
-2.10 [ ] Logging estruturado + correlação (trace-id)
-2.11 [ ] Documentação Swagger/OpenAPI
+2.1 [x] Criar solution e projetos: Core (Domínio), Orders.Service, Events.Service, Gateway (opcional), Shared
+2.2 [x] Adicionar pacotes (Serilog, Swagger, HealthChecks)
+2.3 [x] Implementar modelo Order + eventos de domínio
+2.4 [x] Implementar repositório InMemory de Orders
+2.5 [x] Implementar API REST de Orders (CRUD mínimo + criar)
+2.6 [x] Implementar serviço SSE (endpoint /sse/stream) (registry, endpoint, publisher, heartbeat OK)
+2.7 [x] Implementar hub interno de conexão (SseClientRegistry)
+2.8 [x] Integrar Orders -> publicar evento -> SSE broadcast (order-created + status-changed)
+2.9 [x] Health checks (/health) e /ready (custom sse_registry + repository + JSON readiness response)
+2.10 [x] Logging estruturado + correlação (trace-id middleware + enrichment + SSE payload)
+2.11 [x] Documentação Swagger/OpenAPI (trace header filter, exemplos OrderResponse & ErrorResponse, descrição endpoint SSE)
 
 ## 3. Frontend (Angular)
-3.1 [ ] Criar projeto Angular base
-3.2 [ ] Serviço Angular para SSE (EventSource wrapper + reconexão)
-3.3 [ ] Serviço Orders API (HttpClient)
-3.4 [ ] Componente de listagem de pedidos em tempo real
-3.5 [ ] Form para criar novo pedido
-3.6 [ ] Indicação visual de conexão (online/offline SSE)
-3.7 [ ] Tratamento de reconexão e backoff
-3.8 [ ] Pequenos testes unitários (serviço SSE)
+3.1 [x] Criar projeto Angular base
+3.2 [x] Serviço Angular para SSE (EventSource wrapper + reconexão)
+3.3 [x] Serviço Orders API (HttpClient)
+3.4 [x] Componente de listagem de pedidos em tempo real
+3.5 [x] Form para criar novo pedido
+3.6 [x] Indicação visual de conexão (online/offline SSE)
+3.7 [x] Tratamento de reconexão e backoff (configurável + watchdog + offline handling)
+3.8 [x] Pequenos testes unitários (serviço SSE) (backoff, listeners, watchdog, offline/online, controls, destroy)
 
 ## 4. Integração & Execução
-4.1 [ ] Script de execução simultânea (backend + frontend)
-4.2 [ ] Dockerfile(s) backend
-4.3 [ ] Dockerfile frontend
-4.4 [ ] docker-compose.yml (rede interna + variáveis)
-4.5 [ ] Ajustar CORS e headers corretos para SSE
-4.6 [ ] Teste de carga leve (k6 ou autocannon) opcional
-4.7 [ ] Guia de troubleshooting
+4.1 [x] Script de execução simultânea (backend + frontend)
+4.2 [x] Dockerfile(s) backend
+4.3 [x] Dockerfile frontend
+4.4 [x] docker-compose.yml (rede interna + variáveis)
+4.5 [x] Ajustar CORS e headers corretos para SSE
+4.6 [x] Teste de carga leve (k6 ou autocannon) opcional
+4.7 [x] Guia de troubleshooting
 
 ## 5. Observabilidade & Robustez
-5.1 [ ] Estrutura de logs (exemplos) na doc
-5.2 [ ] Métrica simples (contador de conexões ativas)
-5.3 [ ] Estratégia de escalabilidade horizontal (documentação)
-5.4 [ ] Evolução para Redis Pub/Sub (design doc)
+5.1 [x] Estrutura de logs (exemplos) na doc
+5.2 [x] Métrica simples (contador de conexões ativas)
+5.3 [x] Estratégia de escalabilidade horizontal (documentação)
+5.4 [x] Evolução para Redis Pub/Sub (design doc)
 
 ## 6. Documentação Complementar
-6.1 [ ] ADR-0001 - Escolha de SSE
-6.2 [ ] ADR-0002 - Arquitetura inicial in-memory
-6.3 [ ] Comparativo SSE x WebSockets x Polling
-6.4 [ ] FAQ
-6.5 [ ] Glossário
-6.6 [ ] README frontend
-6.7 [ ] README backend
+6.1 [x] ADR-0001 - Escolha de SSE (revisada e finalizada)
+6.2 [x] ADR-0002 - Arquitetura inicial in-memory (revisada e finalizada)
+6.3 [x] Comparativo SSE x WebSockets x Polling (ver `concepts/01-sse-vs-websockets-polling.md`)
+6.4 [x] FAQ (ver `faq.md`)
+6.5 [x] Glossário (ver `glossario.md`)
+6.6 [x] README frontend (ver `../frontend/orders-web/README.md`)
+6.7 [x] README backend (ver `../backend/README.md`)
 
 ## 7. Qualidade & Automação
-7.1 [ ] Configurar lint + analyzers .NET
-7.2 [ ] Configurar ESLint + Prettier Angular
-7.3 [ ] GitHub Actions (build + test) opcional
-7.4 [ ] Testes unitários backend (mínimos)
-7.5 [ ] Testes e2e simples (criar pedido -> receber evento)
+7.1 [x] Configurar lint + analyzers .NET (Directory.Build.props + analyzers)
+7.2 [x] Configurar ESLint + Prettier Angular (já presente .eslintrc.cjs + scripts lint/format)
+7.3 [x] GitHub Actions (build + test) opcional (workflow ci.yml)
+7.4 [x] Testes unitários backend (mínimos) (OrderEntityTests)
+7.5 [x] Testes e2e simples (criar pedido -> receber evento) (SseSseFlowTests)
 
 ## 8. Finalização
 8.1 [ ] Revisão geral de código
@@ -78,4 +78,4 @@ Legenda de Status:
 ---
 
 ## Próxima Task Sugerida
-Iniciar pela 2.1: Criar solution e projetos.
+Preparar seção 6 (Documentação complementar) iniciando ADR reviews
